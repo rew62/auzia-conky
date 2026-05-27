@@ -18,7 +18,7 @@ possible values of THEME
     gruvbox  dark     gruvbox light
     contrast dark     contrast light
 ]]
-THEME = "blue dark"     -- choose one of the above
+THEME = "alien dark"     -- choose one of the above
 
 --[[
 waiting time before starting conky
@@ -42,18 +42,27 @@ EDIT THIS to match your network interface.
 You can find out by executing `ifconfig` or `ip link`.
 It might be "wlan0", "eth0", "wlp3s0" or something else
 ]]
-net_interface = "wlan0"
+net_interface = "wlp2s0"
 
 --[[
 this depends on your own internet speed
 ]]
-download_rate_maximum = 1000     -- kb
-upload_rate_maximum   = 1000     -- kb
+download_rate_maximum = 62500    -- kb  (500 Mbps)
+upload_rate_maximum   = 62500    -- kb  (500 Mbps)
+
+--[[
+Controls the curve of the network ring. < 1 = more sensitive at low speeds,
+1 = linear, > 1 = less sensitive at low speeds.
+Suggested range: 0.2 (very sensitive) to 1.0 (linear)
+]]
+net_ring_gamma = 0.3
 
 --[[
 This is the default font used in write() if no other is provided
 ]]
-main_font = "Mono"
+main_font  = "Rubik"
+mono_font  = "IBM Plex Mono"
+glyph_font = "MonaspiceNe Nerd Font"
 
 --[[
 the public ip is fetched from the internet.

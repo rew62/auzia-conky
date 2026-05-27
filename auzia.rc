@@ -1,14 +1,14 @@
 conky.config = {
     minimum_height = 720,
     minimum_width = 1240,
-    gap_y = 40,
-    gap_x = 2,
+    gap_x = 0,
+    gap_y = 20,
     alignment = 'middle_middle',
     lua_load = "settings.lua start.lua",
     lua_draw_hook_pre = "main",
     text_buffer_size = 2048,
     double_buffer = true,
-    background = true,
+    background = false,
     update_interval = 1,
     own_window = true,
     own_window_class = 'Conky',
@@ -19,6 +19,7 @@ conky.config = {
     own_window_argb_value = 0,
     use_xft = true,
     override_utf8_locale = true,
+    short_units          = true,
 }
 
 conky.text = [[]]

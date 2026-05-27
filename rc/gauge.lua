@@ -1,9 +1,18 @@
 
 local S = {
     mem = {
-        x                 = 1020,
-        y                 = 200,
-        radius            = 160,
+        x           = 1020,
+        y           = 200,
+        radius      = 160,
+        thickness   = 18,
+        begin_angle = 0,
+        end_angle   = 320,
+        swap = {
+            offset      = -18,
+            thickness   = 14,
+            begin_angle = 0,
+            end_angle   = 320,
+        },
         text = {
             indicators    = { x = 950, y = 40 },
             process_title = { x = 930, y = 150 },
@@ -28,38 +37,42 @@ local S = {
 
 
     clock = {
-        x              = 600,
-        y              = 300,
-        width          = 10,
-        radius         = 140,
-        font_height    = 110,
-        font_m         = 84,
-        hr             = { x = 510, y = 290 },
-        mn             = { x = 590, y = 380 },
-        dt             = { x = 550, y = 310 },
-        ut             = { x = 550, y = 410 },
+        x           = 600,
+        y           = 300,
+        font_height = 110,
+        font_m      = 84,
+        radius  = 140,
+        seconds = { offset = 0,  thickness = 2.5, begin_angle = 0, end_angle = 360, max = 60 },
+        minutes = { offset = 7,  thickness = 5,   begin_angle = 0, end_angle = 360, max = 60 },
+        hours   = { offset = 18, thickness = 10,  begin_angle = 0, end_angle = 360, max = 24 },
+        hr = { x = 510, y = 290 },
+        mn = { x = 590, y = 380 },
+        dt = { x = 550, y = 310 },
+        ut = { x = 550, y = 410 },
     },
 
 
     disk = {
-        x              = 840,
-        y              = 500,
-        radius         = 120,
-        thickness      = 18,
-        begin_angle    = 20,
-        end_angle      = -260,
+        x           = 840,
+        y           = 500,
+        radius      = 120,
+        home_offset = -22,
+        thickness   = 18,
+        begin_angle = 20,
+        end_angle   = -260,
         text = {
 
         }
     },
 
     net = {
-        x              = 360,
-        y              = 500,
-        width          = 10,
-        radius         = 120,
-        begin_angle    = 0,
-        end_angle      = 320,
+        x             = 360,
+        y             = 500,
+        radius        = 120,
+        thickness     = 15,
+        upload_offset = -18,
+        begin_angle   = 0,
+        end_angle     = 320,
         indicators = {
             down       = {x = 295, y = 385},
             up         = {x = 295, y = 405},

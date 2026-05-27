@@ -57,7 +57,9 @@ local C = {
     gruvbox_dark     = build_color(0x282828, 0xEBDBB2, 0xFBF1C7, 0xFE8019, 0xCC241D),
     gruvbox_light    = build_color(0xFBF1C7, 0x3C3836, 0x282828, 0xD65D0E, 0xCC241D),
     contrast_dark    = build_color(0x000000, 0xffffff, 0xffffff, 0xf36910, 0xFF0000, 0.5, 1),
-    contrast_light   = build_color(0xffffff, 0x000000, 0x000000, 0xf36910, 0xFF0000, 0.3, 1)
+    contrast_light   = build_color(0xffffff, 0x000000, 0x000000, 0xf36910, 0xFF0000, 0.3, 1),
+    alien_dark       = build_color(0xD0B8E8, 0x98FB98, dark_text_color),
+    alien_light      = build_color(0x98FB98, 0xD0B8E8, light_text_color)
 }
 
 

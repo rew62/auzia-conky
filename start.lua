@@ -30,7 +30,7 @@ function start()
     draw_memory()
     draw_clock()
     draw_disks()
-    draw_battery()
+    -- draw_battery()
     draw_titles()
     draw_net()
 end
@@ -39,7 +39,7 @@ end
 function draw_single_cpu_core(coreN)
     local val = nil
     if coreN.number >= 0 then val = cpu_percent(coreN.number)
-    else val = cpu_temperature_sensors()
+    else val = cpu_temperature()
     end
 
     ring_anticlockwise(S.cpu.x, S.cpu.y, coreN.radius, coreN.thickness, coreN.begin_angle, coreN.end_angle, val, coreN.max_value, color_frompercent(tonumber(val)))
@@ -55,7 +55,7 @@ function draw_cpu()
         draw_single_cpu_core(ncores[i])
     end
 
-    write_list_proccesses_cpu(160, 147, 20, 4, 12, colors.text)
+    write_list_proccesses_cpu(160, 147, 20, 4, 12, colors.text, mono_font)
 end
 
 
@@ -64,13 +64,13 @@ function draw_memory()
     local swpperc = swap_percent()
     local usedmem = string.format("Usage: %s / %s (%s%s)", memory(), memory_max(), memperc, "%")
 
-    ring_clockwise(S.mem.x, S.mem.y, S.mem.radius, 18, 0, 320, memperc, 100, color_frompercent(tonumber(memperc)))
-    ring_clockwise(S.mem.x, S.mem.y, S.mem.radius-18, 14, 0, 320, swpperc, 100, color_frompercent(tonumber(swpperc)))
+    ring_clockwise(S.mem.x, S.mem.y, S.mem.radius,                    S.mem.thickness,      S.mem.begin_angle,      S.mem.end_angle,      memperc, 100, color_frompercent(tonumber(memperc)))
+    ring_clockwise(S.mem.x, S.mem.y, S.mem.radius + S.mem.swap.offset, S.mem.swap.thickness, S.mem.swap.begin_angle, S.mem.swap.end_angle, swpperc, 100, color_frompercent(tonumber(swpperc)))
     write(S.mem.text.indicators.x, S.mem.text.indicators.y, "ram: " ..memperc .. "%", 12, colors.text)
     write(S.mem.text.indicators.x, S.mem.text.indicators.y+22, "swap: " ..swpperc .. "%", 12, colors.text)
 
     write(S.mem.text.process_title.x, S.mem.text.process_title.y, usedmem, 12, colors.text)
-    write_list_proccesses_mem(S.mem.text.processes.x, S.mem.text.processes.y, 20, 5, 12, colors.text)
+    write_list_proccesses_mem(S.mem.text.processes.x, S.mem.text.processes.y, 20, 5, 12, colors.text, mono_font)
 end
 
 
@@ -80,9 +80,9 @@ function draw_clock()
     local h = time_hour24()
     local date = string.format("%s, %s %s, %s", time_day_short(), time_month_short(), time_day_number(), time_year())
 
-    ring_clockwise(S.clock.x, S.clock.y, S.clock.radius, S.clock.width/4, 60, 420, s, 59, colors.fg)
-    ring_clockwise(S.clock.x, S.clock.y, S.clock.radius+7, S.clock.width/2, -60, 300, m, 59, colors.fg)
-    ring_clockwise(S.clock.x, S.clock.y, S.clock.radius+18, S.clock.width, 0, 360, h, 23, colors.fg)
+    ring_clockwise(S.clock.x, S.clock.y, S.clock.radius + S.clock.seconds.offset, S.clock.seconds.thickness, S.clock.seconds.begin_angle, S.clock.seconds.end_angle, s, S.clock.seconds.max, colors.fg)
+    ring_clockwise(S.clock.x, S.clock.y, S.clock.radius + S.clock.minutes.offset, S.clock.minutes.thickness, S.clock.minutes.begin_angle, S.clock.minutes.end_angle, m, S.clock.minutes.max, colors.fg)
+    ring_clockwise(S.clock.x, S.clock.y, S.clock.radius + S.clock.hours.offset,   S.clock.hours.thickness,   S.clock.hours.begin_angle,   S.clock.hours.end_angle,   h, S.clock.hours.max,   colors.fg)
 
     write_bold(S.clock.hr.x, S.clock.hr.y, h, S.clock.font_height, colors.text)
     write(S.clock.mn.x, S.clock.mn.y, m, S.clock.font_m, colors.text)
@@ -97,8 +97,8 @@ function draw_disks()
     local rt_text = string.format("Root: %s / %s (%s)", fs_used("/"), fs_size("/"), fs_free("/"))
     local hm_text = string.format("Home: %s / %s (%s)", fs_used("/home"), fs_size("/home"), fs_free("/home"))
 
-    ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius, S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, rt, 100, color_frompercent(tonumber(rt)))
-    ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius-22, S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, hm, 100, color_frompercent(tonumber(hm)))
+    ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius,                      S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, rt, 100, color_frompercent(tonumber(rt)))
+    ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius + S.disk.home_offset, S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, hm, 100, color_frompercent(tonumber(hm)))
 
     write(S.disk.x+45, S.disk.y-S.disk.radius+10, rt_text, 11, colors.text)
     write(S.disk.x+40, S.disk.y-S.disk.radius+35, hm_text, 11, colors.text)
@@ -113,15 +113,15 @@ end
 
 
 function draw_net()
-    ring_clockwise(S.net.x, S.net.y, S.net.radius, 15, S.net.begin_angle, S.net.end_angle, download_speed_kb(), download_rate_maximum, colors.fg)
-    ring_clockwise(S.net.x, S.net.y, S.net.radius-18, 15, S.net.begin_angle, S.net.end_angle, upload_speed_kb(), upload_rate_maximum, colors.fg)
+    ring_clockwise_log(S.net.x, S.net.y, S.net.radius,                       S.net.thickness, S.net.begin_angle, S.net.end_angle, download_speed_kb(), download_rate_maximum, colors.fg)
+    ring_clockwise_log(S.net.x, S.net.y, S.net.radius + S.net.upload_offset, S.net.thickness, S.net.begin_angle, S.net.end_angle, upload_speed_kb(),   upload_rate_maximum,   colors.fg)
 
-    write(S.net.indicators.down.x, S.net.indicators.down.y, "▼ ".. download_speed(), 12, colors.text)
-    write(S.net.indicators.up.x, S.net.indicators.up.y, "▲ "..upload_speed(), 12, colors.text)
+    write(S.net.indicators.down.x, S.net.indicators.down.y, "▼ ".. download_speed(), 12, colors.text, glyph_font)
+    write(S.net.indicators.up.x, S.net.indicators.up.y, "▲ "..upload_speed(), 12, colors.text, glyph_font)
 
     write(S.net.total.down.x-50, S.net.y, "Total ", 12, colors.text)
-    write(S.net.total.down.x, S.net.total.down.y, "▼".. download_total(), 12, colors.text)
-    write(S.net.total.up.x, S.net.total.up.y, "▲"..upload_total(), 12, colors.text)
+    write(S.net.total.down.x, S.net.total.down.y, "▼".. download_total(), 12, colors.text, glyph_font)
+    write(S.net.total.up.x, S.net.total.up.y, "▲"..upload_total(), 12, colors.text, glyph_font)
 
     local inf = {}
     table.insert(inf, "SSID: " .. string.sub(ssid(), 0, 15))
@@ -133,7 +133,7 @@ function draw_net()
         end
         table.insert(inf, "Public IP:      " .. get_public_ip())
     end
-    write_line_by_line(S.net.list.x, S.net.list.y, 20, inf, colors.text, 12)
+    write_line_by_line(S.net.list.x, S.net.list.y, 20, inf, colors.text, 12, false, mono_font)
 end
 
 
@@ -166,9 +166,9 @@ function conky_main()
     end
 
     local updates_ = tonumber(updates())
-    if initialized_battery == false and updates_ > startup_delay  then
-        init_battery()
-    end
+    -- if initialized_battery == false and updates_ > startup_delay  then
+    --     init_battery()
+    -- end
 
     local cs = cairo_xlib_surface_create(conky_window.display, conky_window.drawable,
                                          conky_window.visual, conky_window.width,

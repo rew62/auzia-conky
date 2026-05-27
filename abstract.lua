@@ -8,7 +8,7 @@
 ----------------------------------
 
 require("cairo")
-require("cairo_xlib")
+--require("cairo_xlib")
 require("imlib2")
 require("settings")
 
@@ -79,6 +79,38 @@ function ring_clockwise(x, y, radius, thickness, angle_begin, angle_end, value_s
     angle_begin = angle_begin * (2 * math.pi / 360) - (math.pi / 2)
     angle_end   = angle_end   * (2 * math.pi / 360) - (math.pi / 2)
     local progress = (value / max_value) * (angle_end - angle_begin)
+
+    cairo_set_line_width(cr, thickness)
+    cairo_set_source_rgba(cr, color_convert(colors.bg, colors.bg_alpha))
+    cairo_arc(cr, x, y, radius, angle_begin, angle_end)
+    cairo_stroke(cr)
+
+    cairo_set_line_width(cr, thickness)
+    cairo_set_source_rgba(cr, color_convert(fg_color, colors.fg_alpha))
+    cairo_arc(cr, x, y, radius, angle_begin, angle_begin + progress)
+    cairo_stroke(cr)
+end
+
+
+---draw a clockwise ring with logarithmic scaling (more sensitive at low values)
+---@param x           number
+---@param y           number
+---@param radius      number
+---@param thickness   number
+---@param angle_begin number
+---@param angle_end   number
+---@param value_str   string
+---@param max_value   number
+---@param fg_color    string
+function ring_clockwise_log(x, y, radius, thickness, angle_begin, angle_end, value_str, max_value, fg_color)
+    local value = tonumber(value_str)
+    if value > max_value then value = max_value end
+
+    angle_begin = angle_begin * (2 * math.pi / 360) - (math.pi / 2)
+    angle_end   = angle_end   * (2 * math.pi / 360) - (math.pi / 2)
+    local gamma    = net_ring_gamma or 0.3
+    local ratio    = value <= 0 and 0 or (value / max_value) ^ gamma
+    local progress = ratio * (angle_end - angle_begin)
 
     cairo_set_line_width(cr, thickness)
     cairo_set_source_rgba(cr, color_convert(colors.bg, colors.bg_alpha))
@@ -257,12 +289,13 @@ end
 ---@param   nb_todisplay   number
 ---@param   font_size      number
 ---@param   color          string
-function write_list_proccesses_cpu(x, y, interval, nb_todisplay, font_size, color)
+---@param   font_name      string?
+function write_list_proccesses_cpu(x, y, interval, nb_todisplay, font_size, color, font_name)
     local array = {}
     for i = 1, nb_todisplay do
         table.insert(array, getProcessN(i))
     end
-    write_line_by_line(x, y, interval, array, color, font_size, false)
+    write_line_by_line(x, y, interval, array, color, font_size, false, font_name)
 end
 
 
@@ -273,12 +306,13 @@ end
 ---@param   nb_todisplay   number
 ---@param   font_size      number
 ---@param   color          string
-function write_list_proccesses_mem(x, y, interval, nb_todisplay, font_size, color)
+---@param   font_name      string?
+function write_list_proccesses_mem(x, y, interval, nb_todisplay, font_size, color, font_name)
     local array = {}
     for i = 1, nb_todisplay do
         table.insert(array, getMemoryN(i))
     end
-    write_line_by_line(x, y, interval, array, color, font_size, false)
+    write_line_by_line(x, y, interval, array, color, font_size, false, font_name)
 end
 
 
@@ -292,13 +326,13 @@ end
 ---@param   color       string
 ---@param   font_size   number
 ---@param   bold        boolean?
-function write_line_by_line(x, y, interval, content, color, font_size, bold)
+---@param   font_name   string?
+function write_line_by_line(x, y, interval, content, color, font_size, bold, font_name)
     if bold == nil then bold = false end
+    local weight = bold and CAIRO_FONT_WEIGHT_BOLD or CAIRO_FONT_WEIGHT_NORMAL
     local yy = y
     for i in pairs(content) do
-        if bold then write_bold(x, yy, content[i], font_size, color)
-        else         write(x, yy, content[i], font_size, color)
-        end
+        write(x, yy, content[i], font_size, color, font_name, nil, weight)
         yy = yy + interval
     end
 end
