@@ -100,14 +100,14 @@ function draw_disks()
     ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius,                      S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, rt, 100, color_frompercent(tonumber(rt)))
     ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius + S.disk.home_offset, S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, hm, 100, color_frompercent(tonumber(hm)))
 
-    write(S.disk.x+45, S.disk.y-S.disk.radius+10, rt_text, 11, colors.text)
-    write(S.disk.x+40, S.disk.y-S.disk.radius+35, hm_text, 11, colors.text)
+    write(S.disk.x+48, S.disk.y-S.disk.radius+12, rt_text, 11, colors.text)
+    write(S.disk.x+47, S.disk.y-S.disk.radius+29, hm_text, 11, colors.text)
 
     local dsk_info = {
         "Read:  " .. diskio_read(""),
         "Write: " .. diskio_write(""),
     }
-    write_line_by_line(S.disk.x-40, S.disk.y-10, 20, dsk_info, colors.text, 12)
+    write_line_by_line(S.disk.x-37, S.disk.y-13, 20, dsk_info, colors.text, 12)
 
 end
 
@@ -119,21 +119,12 @@ function draw_net()
     write(S.net.indicators.down.x, S.net.indicators.down.y, "▼ ".. download_speed(), 12, colors.text, glyph_font)
     write(S.net.indicators.up.x, S.net.indicators.up.y, "▲ "..upload_speed(), 12, colors.text, glyph_font)
 
-    write(S.net.total.down.x-50, S.net.y, "Total ", 12, colors.text)
-    write(S.net.total.down.x, S.net.total.down.y, "▼".. download_total(), 12, colors.text, glyph_font)
-    write(S.net.total.up.x, S.net.total.up.y, "▲"..upload_total(), 12, colors.text, glyph_font)
+    write(S.net.total.label.x, S.net.total.label.y, "Total ", 12, colors.text)
+    write(S.net.total.down.x, S.net.total.down.y, "▼ ".. download_total(), 12, colors.text, glyph_font)
+    write(S.net.total.up.x, S.net.total.up.y, "▲ "..upload_total(), 12, colors.text, glyph_font)
 
-    local inf = {}
-    table.insert(inf, "SSID: " .. string.sub(ssid(), 0, 15))
-    table.insert(inf, "Wifi Signal:    " .. wifi_signal() .. "%")
-    table.insert(inf, "Local IP:       " .. local_ip())
-    if use_public_ip then
-        if get_public_ip == nil or (updates()%public_ip_refresh_rate) == 0 then
-            update_public_ip()
-        end
-        table.insert(inf, "Public IP:      " .. get_public_ip())
-    end
-    write_line_by_line(S.net.list.x, S.net.list.y, 20, inf, colors.text, 12, false, mono_font)
+    write(S.net.wifi_info.line1.x, S.net.wifi_info.line1.y, string.sub(ssid(), 0, 15) .. " (" .. wifi_signal() .. "%)", 12, colors.text)
+    write(S.net.wifi_info.line2.x, S.net.wifi_info.line2.y, local_ip(), 12, colors.text)
 end
 
 
@@ -151,10 +142,10 @@ end
 
 function draw_titles()
     if not to_draw_titles then return end
-    write(180, 270, "CPU", 18, colors.text)
-    write(325, S.net.y+80, "Internet", 15, colors.text)
+    write(S.cpu.ring_title.x, S.cpu.ring_title.y, "CPU", 18, colors.text)
+    write(S.net.ring_title.x, S.net.ring_title.y, "Internet", 18, colors.text)
     write(S.mem.text.ring_title.x, S.mem.text.ring_title.y, "Memory", 18, colors.text)
-    write(S.disk.x+100, S.disk.y-S.disk.radius+130, "Hard Disk", 15, colors.text)
+    write(S.disk.ring_title.x, S.disk.ring_title.y, "File System", 18, colors.text)
 end
 
 

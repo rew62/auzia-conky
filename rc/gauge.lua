@@ -17,7 +17,7 @@ local S = {
             indicators    = { x = 950, y = 40 },
             process_title = { x = 930, y = 150 },
             processes     = { x = 945, y = 170 },
-            ring_title    = { x = 990, y = 320 },
+            ring_title    = { x = 985, y = 300 },
         }
     },
 
@@ -56,13 +56,14 @@ local S = {
         x           = 840,
         y           = 500,
         radius      = 120,
-        home_offset = -22,
-        thickness   = 18,
+        home_offset = -18,
+        thickness   = 15,
         begin_angle = 20,
         end_angle   = -260,
         text = {
 
-        }
+        },
+        ring_title = {x = 792, y = 560},
     },
 
     net = {
@@ -78,10 +79,16 @@ local S = {
             up         = {x = 295, y = 405},
         },
         total = {
-            down       = {x = 360, y = 510},
-            up         = {x = 360, y = 490},
+            label      = {x = 310, y = 515},
+            down       = {x = 360, y = 525},
+            up         = {x = 360, y = 505},
         },
-        list = {x = 10, y = 440},
+        list       = {x = 10, y = 440},
+        ring_title = {x = 327, y = 560},
+        wifi_info  = {
+            line1 = {x = 295, y = 462},
+            line2 = {x = 310, y = 478},
+        },
     },
 
 
@@ -798,7 +805,8 @@ local S = {
                     }
                 },
             },
-        }
+        },
+        ring_title = {x = 185, y = 270},
     }
 }
 
