@@ -6,9 +6,9 @@ Auzia is a conky theme that displays system resources usage in rings.
 
 ### For dark themes
 
-##### monochrome dark
+##### alien dark
 
-![monochrome dark](.github/monochrome_dark.jpg)
+![alien dark](.github/alien_dark.png)
 
 ##### blue dark
 
