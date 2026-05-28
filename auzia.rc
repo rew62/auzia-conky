@@ -1,25 +1,35 @@
 conky.config = {
-    minimum_height = 720,
-    minimum_width = 1240,
-    gap_x = 0,
-    gap_y = 20,
-    alignment = 'middle_middle',
-    lua_load = "settings.lua start.lua",
-    lua_draw_hook_pre = "main",
-    text_buffer_size = 2048,
-    double_buffer = true,
-    background = false,
-    update_interval = 1,
-    own_window = true,
-    own_window_class = 'Conky',
-    own_window_type = 'normal',
+
+-- Size and Position --
+    alignment             = 'middle_middle',
+    gap_x                 = -12,
+    gap_y                 = 20,
+    minimum_height        = 640,
+    minimum_width         = 1195,
+
+-- Text --
+    use_xft               = true,
+    override_utf8_locale  = true,
+    short_units           = true,
+    text_buffer_size      = 2048,
+
+-- Window --
+    background            = false,
+    double_buffer         = true,
+    own_window            = true,
+    own_window_class      = 'Conky',
+    own_window_type       = 'normal',
     own_window_transparent = true,
-    own_window_hints = 'undecorated,sticky,skip_taskbar,skip_pager,below',
+    own_window_hints      = 'undecorated,sticky,skip_taskbar,skip_pager,below',
     own_window_argb_visual = true,
     own_window_argb_value = 0,
-    use_xft = true,
-    override_utf8_locale = true,
-    short_units          = true,
+
+-- Other --
+    update_interval       = 1,
+
+-- Lua --
+    lua_load              = "settings.lua start.lua",
+    lua_draw_hook_pre     = "main",
 }
 
 conky.text = [[]]

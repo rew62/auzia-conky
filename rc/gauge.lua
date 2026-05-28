@@ -1,7 +1,7 @@
 
 local S = {
     mem = {
-        x           = 1020,
+        x           = 1015,
         y           = 200,
         radius      = 160,
         thickness   = 18,
@@ -14,10 +14,10 @@ local S = {
             end_angle   = 320,
         },
         text = {
-            indicators    = { x = 950, y = 40 },
-            process_title = { x = 930, y = 150 },
-            processes     = { x = 945, y = 170 },
-            ring_title    = { x = 985, y = 300 },
+            indicators    = { x = 945, y = 40 },
+            process_title = { x = 925, y = 150 },
+            processes     = { x = 940, y = 170 },
+            ring_title    = { x = 980, y = 300 },
         }
     },
 
@@ -48,7 +48,7 @@ local S = {
         hr = { x = 510, y = 290 },
         mn = { x = 590, y = 380 },
         dt = { x = 550, y = 310 },
-        ut = { x = 550, y = 410 },
+        ut = { x = 555, y = 410 },
     },
 
 
@@ -75,8 +75,8 @@ local S = {
         begin_angle   = 0,
         end_angle     = 320,
         indicators = {
-            down       = {x = 295, y = 385},
-            up         = {x = 295, y = 405},
+            down       = {x = 333, y = 385},
+            up         = {x = 333, y = 405},
         },
         total = {
             label      = {x = 310, y = 515},
@@ -806,7 +806,7 @@ local S = {
                 },
             },
         },
-        ring_title = {x = 185, y = 270},
+        ring_title = {x = 185, y = 255},
     }
 }
 

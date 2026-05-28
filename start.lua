@@ -11,6 +11,9 @@ require("abstract")
 local S = require("rc/gauge")
 local to_draw_titles = true
 
+-- detect total logical cores once at startup
+local total_cores = tonumber(io.popen("nproc --all"):read("*n")) or 0
+
 -- set the appropriate cpu object according to the chosen value for `cpu_cores`
 local ncores = nil
 if     cpu_cores == 0  then ncores = S.cpu.cores._0cores
@@ -66,8 +69,8 @@ function draw_memory()
 
     ring_clockwise(S.mem.x, S.mem.y, S.mem.radius,                    S.mem.thickness,      S.mem.begin_angle,      S.mem.end_angle,      memperc, 100, color_frompercent(tonumber(memperc)))
     ring_clockwise(S.mem.x, S.mem.y, S.mem.radius + S.mem.swap.offset, S.mem.swap.thickness, S.mem.swap.begin_angle, S.mem.swap.end_angle, swpperc, 100, color_frompercent(tonumber(swpperc)))
-    write(S.mem.text.indicators.x, S.mem.text.indicators.y, "ram: " ..memperc .. "%", 12, colors.text)
-    write(S.mem.text.indicators.x, S.mem.text.indicators.y+22, "swap: " ..swpperc .. "%", 12, colors.text)
+    write(S.mem.text.indicators.x+10, S.mem.text.indicators.y+4, "ram: " ..memperc .. "%", 12, colors.text)
+    write(S.mem.text.indicators.x+3, S.mem.text.indicators.y+22, "swap: " ..swpperc .. "%", 12, colors.text)
 
     write(S.mem.text.process_title.x, S.mem.text.process_title.y, usedmem, 12, colors.text)
     write_list_proccesses_mem(S.mem.text.processes.x, S.mem.text.processes.y, 20, 5, 12, colors.text, mono_font)
@@ -105,7 +108,7 @@ function draw_disks()
 
     local dsk_info = {
         "Read:  " .. diskio_read(""),
-        "Write: " .. diskio_write(""),
+        "Write:  " .. diskio_write(""),
     }
     write_line_by_line(S.disk.x-37, S.disk.y-13, 20, dsk_info, colors.text, 12)
 
@@ -116,8 +119,10 @@ function draw_net()
     ring_clockwise_log(S.net.x, S.net.y, S.net.radius,                       S.net.thickness, S.net.begin_angle, S.net.end_angle, download_speed_kb(), download_rate_maximum, colors.fg)
     ring_clockwise_log(S.net.x, S.net.y, S.net.radius + S.net.upload_offset, S.net.thickness, S.net.begin_angle, S.net.end_angle, upload_speed_kb(),   upload_rate_maximum,   colors.fg)
 
-    write(S.net.indicators.down.x, S.net.indicators.down.y, "▼ ".. download_speed(), 12, colors.text, glyph_font)
-    write(S.net.indicators.up.x, S.net.indicators.up.y, "▲ "..upload_speed(), 12, colors.text, glyph_font)
+    write_right(S.net.indicators.down.x, S.net.indicators.down.y, download_speed(), 12, colors.text)
+    write(S.net.indicators.down.x + 6, S.net.indicators.down.y + 5, "▼", 24, 0x2D9EEA, glyph_font)
+    write_right(S.net.indicators.up.x, S.net.indicators.up.y, upload_speed(), 12, colors.text)
+    write(S.net.indicators.up.x + 6, S.net.indicators.up.y + 3, "▲", 22, 0xF05555, glyph_font)
 
     write(S.net.total.label.x, S.net.total.label.y, "Total ", 12, colors.text)
     write(S.net.total.down.x, S.net.total.down.y, "▼ ".. download_total(), 12, colors.text, glyph_font)
@@ -143,7 +148,8 @@ end
 function draw_titles()
     if not to_draw_titles then return end
     write(S.cpu.ring_title.x, S.cpu.ring_title.y, "CPU", 18, colors.text)
-    write(S.net.ring_title.x, S.net.ring_title.y, "Internet", 18, colors.text)
+    write(S.cpu.ring_title.x, S.cpu.ring_title.y + 18, cpu_cores .. " of " .. total_cores, 11, colors.text)
+    write(S.net.ring_title.x, S.net.ring_title.y, "Network", 18, colors.text)
     write(S.mem.text.ring_title.x, S.mem.text.ring_title.y, "Memory", 18, colors.text)
     write(S.disk.ring_title.x, S.disk.ring_title.y, "File System", 18, colors.text)
 end

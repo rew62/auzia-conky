@@ -251,6 +251,21 @@ function write(x, y, text, font_size, color, font_name, font_slant, font_face, a
 end
 
 
+---write text right-aligned so its right edge is at x
+function write_right(x, y, text, font_size, color, font_name)
+    font_name = font_name or main_font
+    cairo_select_font_face(cr, font_name, CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL)
+    cairo_set_font_size(cr, font_size)
+    local extents = cairo_text_extents_t:create()
+    tolua.takeownership(extents)
+    cairo_text_extents(cr, text, extents)
+    cairo_set_source_rgba(cr, color_convert(color, 1))
+    cairo_move_to(cr, x - extents.width, y)
+    cairo_show_text(cr, text)
+    cairo_stroke(cr)
+end
+
+
 ---convenience function to write text in bold
 ---@param   x           number
 ---@param   y           number
