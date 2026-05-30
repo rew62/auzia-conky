@@ -42,7 +42,17 @@ EDIT THIS to match your network interface.
 You can find out by executing `ifconfig` or `ip link`.
 It might be "wlan0", "eth0", "wlp3s0" or something else
 ]]
-net_interface = "wlp2s0"
+local function _read_env_interface(path)
+    local f = io.open(path, "r")
+    if not f then return nil end
+    for line in f:lines() do
+        local v = line:match('^INTERFACE_NAME%s*=%s*"?([^"\']*)"?')
+        if v and v ~= "" then f:close(); return v end
+    end
+    f:close()
+    return nil
+end
+net_interface = _read_env_interface("../alien/.env") or "wlp2s0"
 
 --[[
 this depends on your own internet speed

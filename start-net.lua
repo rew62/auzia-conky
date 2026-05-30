@@ -16,7 +16,17 @@ startup_delay = 5
 Edit to match your network interface.
 Find it with `ifconfig` or `ip link` — e.g. "wlan0", "eth0", "wlp3s0".
 ]]
-net_interface = "wlp2s0"
+local function _read_env_interface(path)
+    local f = io.open(path, "r")
+    if not f then return nil end
+    for line in f:lines() do
+        local v = line:match('^INTERFACE_NAME%s*=%s*"?([^"\']*)"?')
+        if v and v ~= "" then f:close(); return v end
+    end
+    f:close()
+    return nil
+end
+net_interface = _read_env_interface("../alien/.env") or "wlp2s0"
 
 download_rate_maximum = 1000    -- kb
 upload_rate_maximum   = 1000    -- kb
