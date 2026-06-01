@@ -458,23 +458,35 @@ function utime()                return parse("utime") end                   --  
 function diskio(device)         return parse("diskio " .. device) end       --  device ex: /dev/sda
 function diskio_read(device)    return parse("diskio_read " .. device) end
 function diskio_write(device)   return parse("diskio_write " .. device) end
-function cpu_temperature()      return parse("acpitemp") end                --  temperature in C°
-function cpu_temperature_sensors()                                          -- this function uses the command 'sensors' to obtain the cpu temperature
-    local file = io.popen("sensors | awk '/CPU: / {printf substr($2,2,2)}' 2> /dev/null")
+function cpu_temperature()
+    local f = io.open("/sys/class/thermal/thermal_zone0/temp", "r")
+    if f then
+        f:close()
+        return parse("acpitemp")
+    end
+
+    local temp = cpu_temperature_sensors()
+    if temp and temp ~= "" and tonumber(temp) ~= nil then
+        return temp
+    end
+
+    return "0"
+end
+
+function cpu_temperature_sensors()
+    local file = io.popen("sensors 2>/dev/null | grep -E 'CPU|Core 0|Package id 0' | head -n 1 | grep -oE '[0-9.]+' | head -n 1")
     if not file then
-        io.stderr:write("Error while executing a command containing 'sensors' and 'awk'. Defaulting to cpu_temperature()\n")
-        return cpu_temperature()
+        return nil
     end
 
     local result = file:read("*a")
     file:close()
 
-    if tonumber(result) == nil then
-        io.stderr:write("Error. Invalid result from 'sensors'. Defaulting to cpu_temperature()\n")
-        return cpu_temperature()
+    if result == nil or result == "" or tonumber(result) == nil then
+        return nil
     end
 
-    return result
+    return result:gsub("%\n", "")
 end
 
 

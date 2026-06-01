@@ -15,8 +15,8 @@ local S = {
         },
         text = {
             indicators    = { x = 945, y = 40 },
-            process_title = { x = 925, y = 150 },
-            processes     = { x = 940, y = 170 },
+            process_title = { x = 945, y = 150 },
+            processes     = { x = 950, y = 170 },
             ring_title    = { x = 980, y = 300 },
         }
     },
@@ -56,14 +56,16 @@ local S = {
         x           = 840,
         y           = 500,
         radius      = 120,
-        home_offset = -18,
         thickness   = 15,
         begin_angle = 20,
         end_angle   = -260,
-        text = {
-
+        rings = {
+            {offset = 0,   thickness = 15},
+            {offset = -18, thickness = 15},
+            {offset = -36, thickness = 14},
+            {offset = -54, thickness = 13},
         },
-        ring_title = {x = 792, y = 560},
+        ring_title = {x = 792, y = 540},
     },
 
     net = {

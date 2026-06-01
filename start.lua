@@ -14,6 +14,14 @@ local to_draw_titles = true
 -- detect total logical cores once at startup
 local total_cores = tonumber(io.popen("nproc --all"):read("*n")) or 0
 
+-- clamp cpu_cores down to a valid layout if setting exceeds actual hardware
+if cpu_cores > total_cores then
+    local valid = {12, 10, 8, 6, 4, 2, 0}
+    for _, v in ipairs(valid) do
+        if v <= total_cores then cpu_cores = v; break end
+    end
+end
+
 -- set the appropriate cpu object according to the chosen value for `cpu_cores`
 local ncores = nil
 if     cpu_cores == 0  then ncores = S.cpu.cores._0cores
@@ -26,6 +34,40 @@ elseif cpu_cores == 12 then ncores = S.cpu.cores._12cores
 else
     print("ERROR. the provided value of cpu_cores is not valid. Defaulting to 4 cores")
     ncores = S.cpu.cores._4cores
+end
+
+-- detect real mount points once at startup (max 4, same logic as Mimod get_mounts.sh)
+local disk_mounts = {}
+do
+    local real_fs = "ext[234]|xfs|btrfs|ntfs|vfat|exfat|f2fs|nfs4?|cifs|fuseblk|zfs"
+    local f = io.popen("findmnt -rno TARGET,FSTYPE 2>/dev/null | grep -E '" .. real_fs .. "'")
+    if f then
+        for line in f:lines() do
+            local target = line:match("^(%S+)")
+            if target and not (
+                target:match("^/boot") or target:match("^/snap") or
+                target:match("^/proc") or target:match("^/sys")  or
+                target:match("^/dev")  or target:match("^/run")
+            ) then
+                local name = target:match("([^/]+)$") or ""
+                if name == "" then name = "root" end
+                table.insert(disk_mounts, {path = target, name = name})
+                if #disk_mounts >= 4 then break end
+            end
+        end
+        f:close()
+    end
+    if #disk_mounts == 0 then
+        disk_mounts = {{path = "/", name = "root"}}
+    end
+
+    table.sort(disk_mounts, function(a, b)
+        if a.path == "/"     then return true  end
+        if b.path == "/"     then return false end
+        if a.path == "/home" then return true  end
+        if b.path == "/home" then return false end
+        return a.path < b.path
+    end)
 end
 
 function start()
@@ -95,23 +137,25 @@ end
 
 
 function draw_disks()
-    local rt = fs_used_perc("/")
-    local hm = fs_used_perc("/home")
-    local rt_text = string.format("Root: %s / %s (%s)", fs_used("/"), fs_size("/"), fs_free("/"))
-    local hm_text = string.format("Home: %s / %s (%s)", fs_used("/home"), fs_size("/home"), fs_free("/home"))
-
-    ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius,                      S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, rt, 100, color_frompercent(tonumber(rt)))
-    ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius + S.disk.home_offset, S.disk.thickness, S.disk.begin_angle, S.disk.end_angle, hm, 100, color_frompercent(tonumber(hm)))
-
-    write(S.disk.x+48, S.disk.y-S.disk.radius+12, rt_text, 11, colors.text)
-    write(S.disk.x+47, S.disk.y-S.disk.radius+29, hm_text, 11, colors.text)
+    for i, mount in ipairs(disk_mounts) do
+        local ring = S.disk.rings[i]
+        if not ring then break end
+        local perc = fs_used_perc(mount.path)
+        ring_anticlockwise(S.disk.x, S.disk.y, S.disk.radius + ring.offset, ring.thickness,
+                           S.disk.begin_angle, S.disk.end_angle, perc, 100,
+                           color_frompercent(tonumber(perc)))
+        local n = mount.name:sub(1, 5)
+        local label = string.format("%s: %s / %s (%s)",
+            n:sub(1,1):upper() .. n:sub(2),
+            fs_used(mount.path), fs_size(mount.path), fs_free(mount.path))
+        write(S.disk.x+48, S.disk.y - S.disk.radius + 12 + (i-1)*17, label, 11, colors.text)
+    end
 
     local dsk_info = {
         "Read:  " .. diskio_read(""),
         "Write:  " .. diskio_write(""),
     }
     write_line_by_line(S.disk.x-37, S.disk.y-13, 20, dsk_info, colors.text, 12)
-
 end
 
 
