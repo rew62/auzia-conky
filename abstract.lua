@@ -73,7 +73,7 @@ end
 ---@param max_value   number
 ---@param fg_color    string
 function ring_clockwise(x, y, radius, thickness, angle_begin, angle_end, value_str, max_value, fg_color)
-    local value = tonumber(value_str)
+    local value = tonumber(value_str) or 0
     if value > max_value then value = max_value end
 
     angle_begin = angle_begin * (2 * math.pi / 360) - (math.pi / 2)
@@ -103,7 +103,7 @@ end
 ---@param max_value   number
 ---@param fg_color    string
 function ring_clockwise_log(x, y, radius, thickness, angle_begin, angle_end, value_str, max_value, fg_color)
-    local value = tonumber(value_str)
+    local value = tonumber(value_str) or 0
     if value > max_value then value = max_value end
 
     angle_begin = angle_begin * (2 * math.pi / 360) - (math.pi / 2)
@@ -135,7 +135,7 @@ end
 ---@param max_value   number
 ---@param fg_color    string
 function ring_anticlockwise(x, y, radius, thickness, angle_begin, angle_end, value_str, max_value, fg_color)
-    local value = tonumber(value_str)
+    local value = tonumber(value_str) or 0
     if value > max_value then value = max_value end
 
     angle_begin = angle_begin * (2 * math.pi / 360) - (math.pi / 2)
@@ -163,7 +163,7 @@ end
 ---@param   max_value   number
 ---@param   color       string
 function rectangle_leftright(x, y, len, thick, value_str, max_value, color)
-    local value = tonumber(value_str)
+    local value = tonumber(value_str) or 0
     if value > max_value then value = max_value end
 
     cairo_set_source_rgba(cr, color_convert(colors.bg, colors.bg_alpha))
@@ -199,7 +199,7 @@ end
 ---@param   max_value   number
 ---@param   color       string
 function rectangle_bottomup(x, y, len, thick, value_str, max_value, color)
-    local value = tonumber(value_str)
+    local value = tonumber(value_str) or 0
     if value > max_value then value = max_value end
 
     cairo_set_source_rgba(cr, color_convert(colors.bg, colors.bg_alpha))

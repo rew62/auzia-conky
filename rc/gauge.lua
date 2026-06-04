@@ -808,7 +808,7 @@ local S = {
                 },
             },
         },
-        ring_title = {x = 185, y = 255},
+        ring_title = {x = 185, y = 245},
     }
 }
 

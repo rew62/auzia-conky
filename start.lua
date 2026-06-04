@@ -11,8 +11,22 @@ require("abstract")
 local S = require("rc/gauge")
 local to_draw_titles = true
 
--- detect total logical cores once at startup
-local total_cores = tonumber(io.popen("nproc --all"):read("*n")) or 0
+-- detect logical and physical core counts once at startup
+local total_cores = 0
+local physical_cores = 0
+do
+    local f = io.open("/proc/cpuinfo", "r")
+    if f then
+        for line in f:lines() do
+            if line:match("^processor%s*:") then total_cores = total_cores + 1 end
+            local n = line:match("^cpu cores%s*:%s*(%d+)")
+            if n and physical_cores == 0 then physical_cores = tonumber(n) end
+        end
+        f:close()
+    end
+    if total_cores == 0   then total_cores   = 1 end
+    if physical_cores == 0 then physical_cores = total_cores end
+end
 
 -- clamp cpu_cores down to a valid layout if setting exceeds actual hardware
 if cpu_cores > total_cores then
@@ -191,8 +205,9 @@ end
 
 function draw_titles()
     if not to_draw_titles then return end
-    write(S.cpu.ring_title.x, S.cpu.ring_title.y, "CPU", 18, colors.text)
-    write(S.cpu.ring_title.x, S.cpu.ring_title.y + 18, cpu_cores .. " of " .. total_cores, 11, colors.text)
+    write(S.cpu.ring_title.x - 5, S.cpu.ring_title.y,  "CPU", 18, colors.text)
+    write(S.cpu.ring_title.x - 35, S.cpu.ring_title.y + 18, physical_cores .. " cores / " .. total_cores .. " threads", 11, colors.text)
+    write(S.cpu.ring_title.x - 5, S.cpu.ring_title.y + 32, cpu_cores .. " of " .. physical_cores, 11, colors.text)
     write(S.net.ring_title.x, S.net.ring_title.y, "Network", 18, colors.text)
     write(S.mem.text.ring_title.x, S.mem.text.ring_title.y, "Memory", 18, colors.text)
     write(S.disk.ring_title.x, S.disk.ring_title.y, "File System", 18, colors.text)
