@@ -24,8 +24,9 @@ do
         end
         f:close()
     end
-    if total_cores == 0   then total_cores   = 1 end
+    if total_cores == 0    then total_cores    = 1 end
     if physical_cores == 0 then physical_cores = total_cores end
+    if physical_cores < cpu_cores then physical_cores = cpu_cores end
 end
 
 -- clamp cpu_cores down to a valid layout if setting exceeds actual hardware
